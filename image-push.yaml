@@ -1,0 +1,20 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: image-push
+spec:    
+  params:
+    - name: IMAGE
+      description: The image that will be build out of this task
+      type: string
+  steps:
+    - name: pushing-image-task
+      image: registry.access.redhat.com/ubi7:7.8-383
+      workingDir: /workspace/source
+      script: |
+        #!/bin/bash
+        #
+        echo "Pushing image $(inputs.params.IMAGE) to quay.io"
+        sleep 10
+        echo "Image Pushed!"
+

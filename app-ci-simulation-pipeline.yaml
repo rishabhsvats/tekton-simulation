@@ -1,0 +1,66 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: app-ci-simulation-pipeline
+spec:
+  workspaces:
+  - name: shared-workspace
+  params:
+  - name: git-url
+    type: string
+    description: url of the git repo for the code of deployment
+  - name: IMAGE
+    type: string
+    description: image to be build from the code
+  tasks:
+  - name: cloning
+    taskRef:
+      kind: Task
+      name: app-clone
+    workspaces:
+    - name: source
+      workspace: shared-workspace
+    params:
+    - name: git-url
+      value: $(params.git-url)
+  - name: building
+    taskRef:
+      kind: Task
+      name: app-build
+    params:
+    - name: IMAGE
+      value: $(params.IMAGE)
+    workspaces:
+    - name: source
+      workspace: shared-workspace
+    runAfter:
+      - cloning
+  - name: image-security-testing
+    taskRef:   
+      kind: Task
+      name: image-security-test
+    params:    
+    - name: IMAGE
+      value: $(params.IMAGE)
+    runAfter:  
+      - building
+  - name: application-testing
+    taskRef:   
+      kind: Task
+      name: application-test
+    params:    
+    - name: IMAGE
+      value: $(params.IMAGE)
+    runAfter:  
+      - building
+  - name: push-image
+    taskRef:   
+      kind: Task
+      name: image-push
+    params:    
+    - name: IMAGE
+      value: $(params.IMAGE)
+    runAfter:  
+      - image-security-testing
+      - application-testing
+

@@ -1,0 +1,29 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: app-build
+spec:
+  workspaces:
+  - name: source
+  params:
+    - name: IMAGE
+      description: The image that will be build out of this task
+      type: string
+  steps:
+    - name: building-image-task
+      image: registry.access.redhat.com/ubi7:7.8-383
+      workingDir: /workspace/source
+      script: |
+        #!/bin/bash
+        #
+        echo "Checking the repository in local workspace"
+        cd test-app
+        echo "================= App Content =================="
+        ls -lrt
+        echo "================================================"
+
+        echo Creating the image using buildah with local Dockerfile 
+        echo ""
+        sleep 15
+        echo Image created and stored at $(inputs.params.IMAGE)
+

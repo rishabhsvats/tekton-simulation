@@ -1,0 +1,28 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: app-ci-simulation-pipelinerun
+spec:
+  params:
+    - name: IMAGE
+      value: >-
+        image-registry.openshift-image-registry.svc:5000/tekton-simulation/app.git
+    - name: git-url
+      value: 'https://github.com/rishabhsvats/app.git'
+  pipelineRef:
+    name: app-ci-simulation-pipeline
+  workspaces:
+    - name: shared-workspace
+      volumeClaimTemplate:
+        apiVersion: v1
+        kind: PersistentVolumeClaim
+        metadata:
+          name: source-pvc
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 500Mi
+          storageClassName: CHANGE_TO_YOUR_LOCAL_STORAGE_CLASS
+          volumeMode: Filesystem

@@ -1,0 +1,20 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: image-security-test
+spec:    
+  params:
+    - name: IMAGE
+      description: The image that will be build out of this task
+      type: string
+  steps:
+    - name: security-analysis-task
+      image: registry.access.redhat.com/ubi7:7.8-383
+      workingDir: /workspace/source
+      script: |
+        #!/bin/bash
+        #
+        echo "Performing standard security checks on $(inputs.params.IMAGE)"
+        sleep 15
+        echo Security checks successful $(inputs.params.IMAGE). Image is fine for use.                                                                                                                                              
+

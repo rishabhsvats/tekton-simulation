@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: app-clone
+spec:
+  workspaces:
+  - name: source
+  params:
+    - name: git-url
+      description: The git repository to fetch application
+      type: string
+  steps:
+    - name: clone-repository-task
+      image: registry.access.redhat.com/ubi7:7.8-383
+      workingDir: /workspace/source
+      script: |
+        #!/bin/bash
+        #
+        echo "Performing git clone to get the latest repository $(inputs.params.git-url)"
+        mkdir -p test-app
+        cd test-app; touch app.war
+        touch Dockerfile
+        sleep 15

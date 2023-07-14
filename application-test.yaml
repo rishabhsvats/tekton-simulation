@@ -1,0 +1,20 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: application-test
+spec:    
+  params:
+    - name: IMAGE
+      description: The image that will be build out of this task
+      type: string
+  steps:
+    - name: application-test-task
+      image: registry.access.redhat.com/ubi7:7.8-383
+      workingDir: /workspace/source
+      script: |
+        #!/bin/bash
+        #
+        echo "Performing application tests on $(inputs.params.IMAGE)"
+        sleep 15
+        echo Tests successful $(inputs.params.IMAGE). Image is fine for use                                                                                                                                              
+
